@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -19,4 +20,7 @@ Route::get('/', function () {
 
 Auth::routes(['verify' => 'true', 'register' => false]);
 
-Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/dashboard', 'DashboardController@index')->name('dashboard');
+Route::resource('permits', 'PermitController');
+Route::post('permits/{permit}/occupants', 'PermitController@storeOccupant')->name('occupants.store');
+Route::resource('users', 'UserController');
