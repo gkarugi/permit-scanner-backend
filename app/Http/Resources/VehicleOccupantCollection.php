@@ -14,8 +14,8 @@ class VehicleOccupantCollection extends ResourceCollection
      */
     public function toArray($request)
     {
-        return [
-                VehicleOccupantResource::collection($this->collection),
-        ];
+        $collection = VehicleOccupantResource::collection($this->collection);
+
+        return $collection;
     }
 }

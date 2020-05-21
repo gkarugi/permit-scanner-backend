@@ -4,10 +4,18 @@
             <div class="col-md-8">
                 <div class="card">
                     <div class="card-header">Example Component</div>
-
                     <div class="card-body">
                         <a href="#" @click="getScans()">Get Scans</a>
+                        <a href="#" @click="normalize()">Normalize Scans</a>
+
                     </div>
+                    <!-- <ul v-if="normalized.entities.scans">
+                        <li v-for="scan in normalized.entities.scans">
+                            <ul>
+                                <li>{{ scan.valid }}</li>
+                            </ul>
+                        </li>
+                    </ul> -->
                 </div>
             </div>
         </div>
@@ -15,15 +23,18 @@
 </template>
 
 <script>
+    import { normalize, schema } from 'normalizr';
+
     export default {
         data() {
             return {
                 scans: [],
+                normalized: [],
             }
         },
         methods: {
             getScans() {
-                fetch("https://d21ff792.ngrok.io/api/scanHistory", {
+                fetch("https://585f6af3.ngrok.io/api/scanHistory", {
                     method: "GET",
                     headers: {
                         "Accept": "application/json",
@@ -37,6 +48,31 @@
                 .catch((e) => {
                     console.log(e);
                 });
+            },
+            normalize() {
+                // Define a occupants schema
+                const occupant = new schema.Entity('occupants');
+
+                // Define a vehicles schema
+                const vehicle = new schema.Entity('vehicles', {
+                    occupants: [occupant]
+                });
+
+                // Define a permits schema
+                const permit = new schema.Entity('permits');
+
+                // Define your scan
+                const scan = new schema.Entity('scans', {
+                  vehicle: vehicle,
+                  permit: permit,
+                });
+
+                const arrayOfScans = new schema.Array(scan);
+
+                console.log(this.scans);
+                const normalizedData = this.normalized = normalize(this.scans, arrayOfScans);
+                
+                console.log(normalizedData);
             }
         },
         mounted() {
